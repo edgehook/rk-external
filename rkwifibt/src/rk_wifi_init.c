@@ -19,7 +19,7 @@
 #define WIFI_PRELOAD_INF	"/sys/class/rkwifi/preload"
 
 #define UNKKOWN_DRIVER_MODULE_ARG ""
-#define MRL_DRIVER_MODULE_ARG "cal_data_cfg=none"
+#define MRL_DRIVER_MODULE_ARG "cal_data_cfg=none sta_name=wlan wfd_name=p2p"
 
 #define BT_TTY_DEV "/dev/ttyS0"
 
