@@ -905,6 +905,22 @@ main(int argc, char **argv) {
                     if(access(update_package, F_OK) == 0)
                         remove(update_package);
                 }
+
+                if (ensure_path_unmounted("/userdata") != 0)
+                {
+                    LOGE("\n === umount userdata fail === \n");
+                } else {
+                    if (resize_volume("/userdata"))
+                        LOGE("\n ---resize_volume userdata error ---\n");
+                }
+
+                if (access("/dev/block/by-name/rootfs", F_OK) == 0) {
+                    if (rk_check_and_resizefs("/dev/block/by-name/rootfs") != 0)
+                        status = INSTALL_ERROR;
+                    if (status != INSTALL_SUCCESS)
+                        LOGE("resizefs failed on /dev/block/by-name/rootfs\n");
+                }
+
                 strlcpy(text, "update images success!", 127);
 	        } else {
                 strlcpy(text, "update images failed!", 127);
