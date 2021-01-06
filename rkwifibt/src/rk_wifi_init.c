@@ -107,6 +107,8 @@ static wifi_device supported_wifi_devices[] = {
 #define MVL_DRIVER_MODULE_PATH1       "/system/lib/modules/sd8xxx.ko"
 #define MVL_DRIVER_MODULE_PATH2       "/system/lib/modules/bt8xxx.ko"
 
+#define RTL_BTUSB_DRIVER_MODULE_PATH "/system/lib/modules/rtk_btusb.ko"
+
 #define DRIVER_MODULE_PATH_UNKNOW    ""
 
 #define RTL8822BS_DRIVER_MODULE_NAME "8822bs"
@@ -138,7 +140,7 @@ wifi_ko_file_name module_list[] =
 	{"RTL8723BU", RTL8723BU_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, ""},
 	{"RTL8188EU", RTL8188EU_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, ""},
 	{"RTL8192DU", RTL8192DU_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, ""},
-	{"RTL8822BU", RTL8822BU_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, ""},
+	{"RTL8822BU", RTL8822BU_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, "RTLUSB"},
 	{"RTL8822BS", RTL8822BS_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, ""},
 	{"RTL8188FU", RTL8188FU_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, ""},
 	{"RTL8189ES", RTL8189ES_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, ""},
@@ -147,7 +149,7 @@ wifi_ko_file_name module_list[] =
 	{"RTL8723DS", RTL8723DS_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, "RTL8723DS"},
 	{"RTL8812AU", RTL8812AU_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, ""},
 	{"RTL8189FS", RTL8189FS_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, ""},
-	{"RTL8822BE", RTL8822BE_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, ""},
+	{"RTL8822BE", RTL8822BE_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, "RTLUSB"},
 	{"AP6335",          BCM_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, AP6335_BT_FIRMWARE_MODULE_PATH},
 	{"AP6330",          BCM_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, AP6330_BT_FIRMWARE_MODULE_PATH},
 	{"AP6354",          BCM_DRIVER_MODULE_PATH, UNKKOWN_DRIVER_MODULE_ARG, AP6354_BT_FIRMWARE_MODULE_PATH},
@@ -451,7 +453,12 @@ int wifibt_load_driver(void)
 			printf("bt_init: %s failed \n", temp);
 			return -1;
 		}
-	} else if (strstr(bt_firmware_patch , "RTL")) {
+	} else if(strstr(bt_firmware_patch , "RTLUSB")){
+		memset(temp, 0, 256);
+		sprintf(temp, "insmod %s", RTL_BTUSB_DRIVER_MODULE_PATH);
+		printf("%s %s\n", __func__, temp);
+		system(temp);	
+	}else if (strstr(bt_firmware_patch , "RTL")) {
 		create_bt_test_file_for_rtl();
 		//system("echo 0 > /sys/class/rfkill/rfkill0/state");
 		//usleep(5000);
