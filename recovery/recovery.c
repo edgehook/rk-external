@@ -986,9 +986,11 @@ main(int argc, char **argv) {
         #endif
 
         if(status == INSTALL_SUCCESS){
+			ui_show_progress2(100);
+			ui_show_text(1);
             printf("update.img Installation success.\n");
             ui_print("update.img Installation success.\n");
-            ui_show_text(0);
+            //ui_show_text(0);
         }
 
     } else if (wipe_data) {
@@ -1020,8 +1022,11 @@ main(int argc, char **argv) {
     }
 
     if (status != INSTALL_SUCCESS) ui_set_background(BACKGROUND_ICON_ERROR);
-    if (status != INSTALL_SUCCESS || ui_text_visible()) {
-        prompt_and_wait();
+    if (status != INSTALL_SUCCESS) {
+		printf("\n Install fail! \n");
+		if(!bSDBootUpdate && ui_text_visible()) {
+        	prompt_and_wait();
+		}
     }
 
     if (sdupdate_package != NULL && bSDBootUpdate) {

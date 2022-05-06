@@ -127,6 +127,7 @@ static void draw_progress_locked()
 
     if (gProgressBarType == PROGRESSBAR_TYPE_NORMAL) {
         float progress = gProgressScopeStart + gProgress * gProgressScopeSize;
+		progress = progress >= 1.0 ? 1.0 : progress;
         int pos = (int) (progress * width);
 
         if (pos > 0) {
@@ -392,6 +393,31 @@ void ui_show_progress(float portion, int seconds)
     gProgress = 0;
     update_progress_locked();
     pthread_mutex_unlock(&gUpdateMutex);
+}
+
+void ui_show_progress2(int progress)
+{
+	float fraction = ((float)progress)/100.0;
+	
+	if(drm_fd < 0) {
+		return;
+	}
+
+	if (fraction < 0.0) fraction = 0.0;
+	if (fraction > 1.0) fraction = 1.0;
+
+
+	if (fraction <= gProgressScopeStart)
+		return;
+
+	pthread_mutex_lock(&gUpdateMutex);
+	gProgressBarType = PROGRESSBAR_TYPE_NORMAL;
+	gProgressScopeStart = fraction;
+	gProgressScopeSize = 0.0;
+	gProgressScopeDuration = 0.0;
+	gProgress = 1.0;
+	update_progress_locked();
+	pthread_mutex_unlock(&gUpdateMutex);
 }
 
 void ui_set_progress(float fraction)
